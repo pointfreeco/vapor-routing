@@ -1,6 +1,6 @@
 import Foundation
-import Vapor
 import URLRouting
+import Vapor
 
 #if canImport(FoundationNetworking)
   import FoundationNetworking
