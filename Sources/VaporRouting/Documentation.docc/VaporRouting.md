@@ -85,6 +85,8 @@ let package = Package(
 )
 ```
 
+Vapor Routing provides Vapor bindings to the [URL Routing][swift-url-routing] package.
+
 ## Getting started
 
 To use this library, one starts by constructing an enum that describes all the routes your website supports. For example, the book endpoint described above can be represented as a particular case:
@@ -220,6 +222,7 @@ A free video from [Point-Free](https://www.pointfree.co) demonstrating how to us
 
 [vapor-routing-docs]: https://pointfreeco.github.io/vapor-routing
 [vapor]: http://vapor.codes
+[swift-url-routing]: http://github.com/pointfreeco/swift-url-routing
 [swift-parsing]: http://github.com/pointfreeco/swift-parsing
 [swift-html-vapor]: https://github.com/pointfreeco/swift-html-vapor
 [express]: http://expressjs.com

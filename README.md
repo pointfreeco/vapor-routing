@@ -73,7 +73,7 @@ In fact, there is a typo in the above code. The URL constructed goes to "/book/:
 + .a(.href("/users/\(user.id)/books/\(book.id)"), book.title)
 ```
 
-This library aims to solve these problems, and more, when dealing with routing in a Vapor application.
+This library aims to solve these problems, and more, when dealing with routing in a Vapor application, by providing Vapor bindings to the [URL Routing][swift-url-routing] package.
 
 ## Getting started
 
@@ -161,6 +161,7 @@ This library is released under the MIT license. See [LICENSE](LICENSE) for detai
 
 [vapor-routing-docs]: https://pointfreeco.github.io/vapor-routing
 [vapor]: http://vapor.codes
+[swift-url-routing]: http://github.com/pointfreeco/swift-url-routing
 [swift-parsing]: http://github.com/pointfreeco/swift-parsing
 [swift-html-vapor]: https://github.com/pointfreeco/swift-html-vapor
 [express]: http://expressjs.com
