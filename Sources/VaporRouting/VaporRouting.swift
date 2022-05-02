@@ -16,7 +16,7 @@ extension Application {
   }
 }
 
-private struct RoutingMiddleware<Router: Parser>: AsyncMiddleware
+public struct RoutingMiddleware<Router: Parser>: AsyncMiddleware
 where Router.Input == URLRequestData {
   let router: Router
   let respond: (Request, Router.Output) async throws -> AsyncResponseEncodable

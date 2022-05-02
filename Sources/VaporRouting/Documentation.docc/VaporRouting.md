@@ -214,6 +214,18 @@ public func configure(_ app: Application) throws {
 }
 ```
 
+With that done you can access the application's router through the request object that is handed to your handler:
+
+```swift
+func siteHandler(
+  request: Request,
+  route: SiteRoute
+) async throws -> any AsyncResponseEncodable {
+  
+  request.application.router.path(for: .userBook(userId: 42, bookId: 123)) // "/users/42/books/123""
+}
+```
+
 ## See Also
 
 A free video from [Point-Free](https://www.pointfree.co) demonstrating how to use the vapor-routing library:
