@@ -45,7 +45,7 @@ When a URL request is made to the server whose method and path matches the above
 
 Notice that we must sprinkle in validation code and error handling into the endpoint's logic in order to coerce the stringy parameter types into first class data types. This obscures the real logic of the endpoint, and any changes to the route's pattern must be kept in sync with the validation logic, such as if we rename the `:userId` or `:bookId` parameters.
 
-In addition to these drawbacks, we often need to be able to generate valid URLs to various server endpoints. For example, suppose we wanted to [generate an HTML page](swift-html-vapor) with a list of all the books for a user, including a link to each book. We have no choice but to manually interpolate a string to form the URL, or build our own ad hoc library of helper functions that do this string interpolation under the hood:
+In addition to these drawbacks, we often need to be able to generate valid URLs to various server endpoints. For example, suppose we wanted to [generate an HTML page][swift-html-vapor] with a list of all the books for a user, including a link to each book. We have no choice but to manually interpolate a string to form the URL, or build our own ad hoc library of helper functions that do this string interpolation under the hood:
 
 ```swift
 Node.ul(
