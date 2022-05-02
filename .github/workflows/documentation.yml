@@ -65,8 +65,9 @@ jobs:
         run: >
           rm -rf docs-out/.git;
           rm -rf docs-out/main;
+          rm -rf docs-out/lib-updates;
 
-          for tag in $(echo "main"; git tag);
+          for tag in $(echo "main"; echo "lib-updates"; git tag);
           do
             echo "⏳ Generating documentation for "$tag" release.";
             
