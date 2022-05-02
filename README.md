@@ -1,6 +1,6 @@
 # vapor-routing
 
-A routing library for [Vapor][vapor] with a focus on type safety, composition and URL generation.
+A routing library for [Vapor][vapor] with a focus on type safety, composition, and URL generation.
 
 ---
 
@@ -19,13 +19,13 @@ This library was discussed in an [episode](http://pointfree.co/episodes/ep188-to
 
 ## Motivation
 
-Routing in [Vapor][vapor] has a simple API that is similar to popular web frameworks in other languages, such as Ruby's [Sinatra][sinatra] or Node's [Express][express]. It works well for simple routes, but complexity grows over time due to lack of type safety and inability to _generate_ correct URLs to pages on your site.
+Routing in [Vapor][vapor] has a simple API that is similar to popular web frameworks in other languages, such as Ruby's [Sinatra][sinatra] or Node's [Express][express]. It works well for simple routes, but complexity grows over time due to lack of type safety and the inability to _generate_ correct URLs to pages on your site.
 
 To see this, consider an endpoint to fetch a book that is associated with a particular user:
 
 ```swift
 // GET /users/:userId/books/:bookId
-app.get("users", ":userId", "books", ":bookId") { req -> Response in
+app.get("users", ":userId", "books", ":bookId") { req -> BooksResponse in
   guard
     let userId = req.parameters.get("userId", Int.self),
     let bookId = req.parameters.get("bookId", Int.self)
@@ -35,17 +35,17 @@ app.get("users", ":userId", "books", ":bookId") { req -> Response in
   }
 
   // Logic for fetching user and book and constructing response...
-  let user = try await database.fetchUser(user.id)
-  let book = try await database.fetchBook(book.id)
+  async let user = database.fetchUser(user.id)
+  async let book = database.fetchBook(book.id)
   return BookResponse(...)
 }
 ```
 
 When a URL request is made to the server whose method and path matches the above pattern, the closure will be executed for handling that endpoint's logic.
 
-Notice that we must sprinkle in validation code and error handling into the endpoint's logic in order to coerce the stringy parameter types into first class data types. This obscures the real logic of the endpoint, and any changes to the route's pattern must be kept in sync with the validation logic, such as if we wanted to rename "users" to "user" and "books" to "book".
+Notice that we must sprinkle in validation code and error handling into the endpoint's logic in order to coerce the stringy parameter types into first class data types. This obscures the real logic of the endpoint, and any changes to the route's pattern must be kept in sync with the validation logic, such as if we rename the `:userId` or `:bookId` parameters.
 
-In addition to these drawbacks, we often need to be able to generate a valid URL to the user's book page by specifying a user and book id. For example, suppose we wanted to generate an HTML page with a list of all the books for a user, including a link to each book. We have no choice but to manually interpolate a string to form the URL:
+In addition to these drawbacks, we often need to be able to generate valid URLs to various server endpoints. For example, suppose we wanted to [generate an HTML page](swift-html-vapor) with a list of all the books for a user, including a link to each book. We have no choice but to manually interpolate a string to form the URL, or build our own ad hoc library of helper functions that do this string interpolation under the hood:
 
 ```swift
 Node.ul(
@@ -77,7 +77,7 @@ This library aims to solve these problems, and more, when dealing with routing i
 
 ## Getting started
 
-To use this libary, one starts by constructing an enum that describes all the routes your website supports. For example, the book endpoint described above can be represented as:
+To use this library, one starts by constructing an enum that describes all the routes your website supports. For example, the book endpoint described above can be represented as a particular case:
 
 ```swift
 enum SiteRoute {
@@ -86,7 +86,7 @@ enum SiteRoute {
 }
 ```
 
-Then you construct a router as a parser-printer from our [parsing library][swift-parsing], which is an object that is capable of parsing URL requests in `SiteRoute` and _printing_ `SiteRoute` values back into URL requests. Such routers can be constructed with various parser-printers the library vends, such as `Path`, `Query`, `Body` and more:
+Then you construct a router, which is an object that is capable of parsing URL requests into `SiteRoute` values and _printing_ `SiteRoute` values back into URL requests. Such routers can be built from various types the library vends, such as `Path` to match particular path components, `Query` to match particular query items, `Body` to decode request body data, and more:
 
 ```swift
 import VaporRouting
@@ -102,7 +102,9 @@ let siteRouter = OneOf {
 }
 ```
 
-Once that little bit of upfront work is done, using the router doesn't look too dissimilar from using Vapor's native routing tools. First you mount the router to the application to take care of all routing responsibilities, and you do so by providing a closure that transforms `SiteRoute` to a response:
+> Note: Routers are built on top of the [Parsing][swift-parsing] library, which provides a general solution for parsing more nebulous data into first-class data types, like URL requests into your app's routes.
+
+Once this little bit of upfront work is done, using the router doesn't look too dissimilar from using Vapor's native routing tools. First you mount the router to the application to take care of all routing responsibilities, and you do so by providing a closure that transforms `SiteRoute` to a response:
 
 ```swift
 // configure.swift
@@ -115,11 +117,11 @@ public func configure(_ app: Application) throws {
 func siteHandler(
   request: Request,
   route: SiteRoute
-) async throws -> AsyncResponseEncodable {
+) async throws -> any AsyncResponseEncodable {
   switch route {
   case .userBook(userId: userId, bookId: bookId):
-    let user = try await database.fetchUser(user.id)
-    let book = try await database.fetchBook(book.id)
+    async let user = database.fetchUser(user.id)
+    async let book = database.fetchBook(book.id)
     return BookResponse(...)
 
   // more cases...
@@ -129,7 +131,7 @@ func siteHandler(
 
 Notice that handling the `.userBook` case is entirely focused on just the logic for the endpoint, not parsing and validating the parameters in the URL.
 
-With that done you can now easily generate URLs to any part of your website usinge a type safe, concise API. For example, generating the list of book links now looks like this:
+With that done you can now easily generate URLs to any part of your website using a type safe, concise API. For example, generating the list of book links now looks like this:
 
 ```swift
 Node.ul(
@@ -144,7 +146,7 @@ Node.ul(
 )
 ```
 
-Note there is no string interpolation or guessing what shape the path should be in. All of that is handled by the router. We only have to provide the data for the user and book ids, and the router takes care of the rest. If we make a change to the `siteRouter`, such as recognizer the singular form "/user/:userId/book/:bookId", then all paths will automatically be updated. We will not need to search the code base to replace "users" with "user" and "books" with "book".
+Note there is no string interpolation or guessing what shape the path should be in. All of that is handled by the router. We only have to provide the data for the user and book ids, and the router takes care of the rest. If we make a change to the `siteRouter`, such as recognizing the singular form "/user/:userId/book/:bookId", then all paths will automatically be updated. We will not need to search the code base to replace "users" with "user" and "books" with "book".
 
 ## Documentation
 
@@ -160,5 +162,6 @@ This library is released under the MIT license. See [LICENSE](LICENSE) for detai
 [vapor-routing-docs]: https://pointfreeco.github.io/vapor-routing
 [vapor]: http://vapor.codes
 [swift-parsing]: http://github.com/pointfreeco/swift-parsing
+[swift-html-vapor]: https://github.com/pointfreeco/swift-html-vapor
 [express]: http://expressjs.com
 [sinatra]: http://sinatrarb.com
