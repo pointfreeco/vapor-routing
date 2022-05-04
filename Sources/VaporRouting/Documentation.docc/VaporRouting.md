@@ -106,7 +106,7 @@ import VaporRouting
 let siteRouter = OneOf {
   // Maps the URL "/users/:userId/books/:bookId" to the
   // SiteRouter.userBook enum case.
-  Route(.case(SiteRouter.userBook)) {
+  Route(.case(SiteRoute.userBook)) {
     Path { "users"; Digits(); "books"; Digits() }
   }
 
@@ -131,7 +131,7 @@ func siteHandler(
   route: SiteRoute
 ) async throws -> any AsyncResponseEncodable {
   switch route {
-  case .userBook(userId: userId, bookId: bookId):
+  case let .userBook(userId: userId, bookId: bookId):
     async let user = database.fetchUser(user.id)
     async let book = database.fetchBook(book.id)
     return BookResponse(...)
