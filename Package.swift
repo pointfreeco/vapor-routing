@@ -15,7 +15,8 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"),
-    .package(url: "https://github.com/pointfreeco/swift-url-routing", from: "0.1.0"),
+    .package(url: "https://github.com/pointfreeco/swift-url-routing", branch: "main"), // from: "0.1.0"),
+    .package(name: "Benchmark", url: "https://github.com/google/swift-benchmark", from: "0.1.1"),
   ],
   targets: [
     .target(
@@ -32,5 +33,13 @@ let package = Package(
         .product(name: "XCTVapor", package: "vapor"),
       ]
     ),
+    .executableTarget(
+      name: "vapor-routing-benchmark",
+      dependencies: [
+        "VaporRouting",
+        .product(name: "Benchmark", package: "Benchmark"),
+        .product(name: "Vapor", package: "vapor"),
+      ]
+    )
   ]
 )

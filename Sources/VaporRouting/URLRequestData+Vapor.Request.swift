@@ -16,9 +16,9 @@ extension URLRequestData {
       let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
     else { return nil }
 
-    let body: [UInt8]?
+    let body: Data?
     if var buffer = request.body.data,
-      let bytes = buffer.readBytes(length: buffer.readableBytes)
+      let bytes = buffer.readData(length: buffer.readableBytes)
     {
       body = bytes
     } else {
@@ -27,12 +27,12 @@ extension URLRequestData {
 
     self.init(
       method: request.method.string,
-      scheme: request.url.scheme,
+      scheme: components.scheme,
       user: request.headers.basicAuthorization?.username,
       password: request.headers.basicAuthorization?.password,
-      host: request.url.host,
-      port: request.url.port,
-      path: request.url.path,
+      host: components.host,
+      port: components.port,
+      path: components.path,
       query: components.queryItems?.reduce(into: [:]) { query, item in
         query[item.name, default: []].append(item.value)
       } ?? [:],
@@ -45,7 +45,7 @@ extension URLRequestData {
         },
         uniquingKeysWith: { $0 + $1 }
       ),
-      body: body.map { Data($0) }
+      body: body
     )
   }
 }
