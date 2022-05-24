@@ -32,7 +32,6 @@ where Router.Input == URLRequestData {
     let route: Router.Output
     do {
       route = try self.router.parse(requestData)
-      return try await self.respond(request, route).encodeResponse(for: request)
     } catch let routingError {
       do {
         return try await next.respond(to: request)
@@ -45,5 +44,6 @@ where Router.Input == URLRequestData {
         return Response(status: .notFound, body: .init(string: "Routing \(routingError)"))
       }
     }
+    return try await self.respond(request, route).encodeResponse(for: request)
   }
 }
