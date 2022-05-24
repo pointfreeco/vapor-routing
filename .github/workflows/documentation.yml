@@ -95,7 +95,7 @@ jobs:
                     --additional-symbol-graph-dir \
                     .build/symbol-graphs \
                     --transform-for-static-hosting \
-                    --hosting-base-path /swift-vapor-routing/"$tag" \
+                    --hosting-base-path /vapor-routing/"$tag" \
                     --output-path docs-out/"$tag" \
                     && echo "✅ Documentation generated for "$tag" release." \
                     || echo "⚠️ Documentation skipped for "$tag".";
