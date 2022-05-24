@@ -12,11 +12,17 @@ extension Application {
     _ router: R,
     use closure: @escaping (Request, R.Output) async throws -> AsyncResponseEncodable
   ) where R.Input == URLRequestData {
-    self.middleware.use(RoutingMiddleware(router: router, respond: closure))
+    self.middleware.use(AsyncRoutingMiddleware(router: router, respond: closure))
   }
 }
 
-private struct RoutingMiddleware<Router: Parser>: AsyncMiddleware
+/// Serves requests using a router and response handler.
+///
+/// You will not typically need to interact with this type directly. Instead you should use the
+/// `mount` method on your Vapor application.
+///
+/// See ``VaporRouting`` for more information on usage.
+public struct AsyncRoutingMiddleware<Router: Parser>: AsyncMiddleware
 where Router.Input == URLRequestData {
   let router: Router
   let respond: (Request, Router.Output) async throws -> AsyncResponseEncodable
