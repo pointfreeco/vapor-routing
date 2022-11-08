@@ -195,8 +195,8 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-url-routing",
         "state": {
           "branch": null,
-          "revision": "80e8a0257ccdd639e31f709954ceca6b690fdc67",
-          "version": "0.3.1"
+          "revision": "f54c4f74e7884f7930560c08387817ce28271770",
+          "version": "0.4.0"
         }
       },
       {
