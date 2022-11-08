@@ -36,7 +36,7 @@ extension URLRequestData {
       query: components.queryItems?.reduce(into: [:]) { query, item in
         query[item.name, default: []].append(item.value)
       } ?? [:],
-      headers: Dictionary(
+      headers: .init(
         request.headers.map { key, value in
           (
             key,

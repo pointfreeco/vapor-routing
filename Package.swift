@@ -15,7 +15,7 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"),
-    .package(url: "https://github.com/pointfreeco/swift-url-routing", from: "0.1.0"),
+    .package(url: "https://github.com/pointfreeco/swift-url-routing", from: "0.4.0"),
   ],
   targets: [
     .target(
