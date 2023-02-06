@@ -32,6 +32,11 @@ where Router.Input == URLRequestData {
     chainingTo next: AsyncResponder
   ) async throws -> Response {
 
+    if request.body.data == nil {
+      try await _ = request.body.collect(max: request.application.routes.defaultMaxBodySize.value)
+        .get()
+    }
+
     guard let requestData = URLRequestData(request: request)
     else { return try await next.respond(to: request) }
 
