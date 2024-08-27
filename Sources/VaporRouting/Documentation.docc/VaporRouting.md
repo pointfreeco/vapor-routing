@@ -203,7 +203,7 @@ public func configure(_ app: Application) throws {
   ...
 
   app.router = router
-    .baseUrl(
+    .baseURL(
       app.environment == .production ? "http://www.mysite.com"
       : app.environment == .staging ? "http://staging.mysite.com"
       : "http://localhost:8080"
